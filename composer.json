@@ -12,15 +12,13 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=7.0",
-        "topthink/framework": "^6.0.0"
+        "topthink/framework": "^6.0.0",
+        "dashingunique/think-generator": "dev-master"
     },
     "autoload": {
         "files": [
             "src/library/Helper.php"
-        ],
-        "psr-4": {
-            "think\\admin\\": "src"
-        }
+        ]
     },
     "extra": {
     }
