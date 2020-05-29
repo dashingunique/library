@@ -18,7 +18,10 @@
     "autoload": {
         "files": [
             "src/library/Helper.php"
-        ]
+        ],
+        "psr-4": {
+            "dashing\\": "src"
+        }
     },
     "extra": {
     }
