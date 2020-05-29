@@ -1,6 +1,6 @@
 <?php
 
-use library\Collection;
+use dashing\library\Collection;
 
 if (!function_exists('uniqueCollection')) {
     /**
