@@ -14,6 +14,35 @@ if (!function_exists('uniqueCollection')) {
     }
 }
 
+if (! function_exists('blank')) {
+    /**
+     * 确定给定值是否为空
+     *
+     * @param  mixed  $value
+     * @return bool
+     */
+    function blank($value)
+    {
+        if (is_null($value)) {
+            return true;
+        }
+
+        if (is_string($value)) {
+            return trim($value) === '';
+        }
+
+        if (is_numeric($value) || is_bool($value)) {
+            return false;
+        }
+
+        if ($value instanceof Countable) {
+            return count($value) === 0;
+        }
+
+        return empty($value);
+    }
+}
+
 if (!function_exists('value')) {
     /**
      * Return the default value of the given value.
