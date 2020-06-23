@@ -1,26 +1,26 @@
 {
-    "name": "dashingunique/think-library",
-    "description": "thinkphp6 extension library",
+    "name": "dashingunique/library",
+    "description": "php extension library",
     "type": "src",
     "license": "MIT",
     "authors": [
         {
-            "name": "dashing unique",
+            "name": "dashingunique",
             "email": "1107842285@qq.com"
         }
     ],
-    "minimum-stability": "dev",
     "require": {
-        "php": ">=7.0",
-        "topthink/framework": "^6.0.0",
-        "dashingunique/think-generator": "dev-master"
+        "php": ">=7.1",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "ext-ctype": "*"
     },
     "autoload": {
         "files": [
-            "src/library/Helper.php"
+            "src/Helper.php"
         ],
         "psr-4": {
-            "dashing\\": "src"
+            "dashingunique\\library\\": "src/"
         }
     },
     "extra": {
