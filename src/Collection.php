@@ -562,6 +562,18 @@ class Collection implements ArrayAccess, Countable, IteratorAggregate, JsonSeria
         return new static(array_slice($this->items, $offset, $length, $preserveKeys));
     }
 
+    /**
+     * 使用回调转换集合中的每个项目
+     *
+     * @param  callable  $callback
+     * @return $this
+     */
+    public function transform(callable $callback)
+    {
+        $this->items = $this->map($callback)->all();
+        return $this;
+    }
+
     // ArrayAccess
     public function offsetExists($offset)
     {
