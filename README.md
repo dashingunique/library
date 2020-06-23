@@ -1,2 +1,2 @@
-# think-library
-thinphp6 拓展库
+# library
+PHP 相关拓展库（包含集合处理等）
