@@ -15,7 +15,8 @@
         "ext-mbstring": "*",
         "ext-ctype": "*",
         "ramsey/uuid": "^4.0",
-        "nesbot/carbon": "^2.36"
+        "nesbot/carbon": "^2.36",
+        "symfony/workflow": "^5.1"
     },
     "autoload": {
         "files": [
