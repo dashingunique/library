@@ -1,26 +1,138 @@
 <?php
 
 
-namespace dashingunique\library;
+namespace dashingUnique\library;
 
+
+use Ramsey\Uuid\Codec\TimestampFirstCombCodec;
+use Ramsey\Uuid\Generator\CombGenerator;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidFactory;
 
 class Str
 {
+    /**
+     * 蛇形单词的缓存。
+     *
+     * @var array
+     */
     protected static $snakeCache = [];
 
+    /**
+     * 驼峰式单词的缓存。
+     *
+     * @var array
+     */
     protected static $camelCache = [];
 
+    /**
+     * 缓存大小写的单词。
+     *
+     * @var array
+     */
     protected static $studlyCache = [];
 
     /**
+     * 应用于生成UUID的回调。
+     *
+     * @var callable
+     */
+    protected static $uuidFactory;
+
+    /**
+     * 在第一次出现给定值之后，返回字符串的其余部分
+     *
+     * @param  string  $subject
+     * @param  string  $search
+     * @return string
+     */
+    public static function after($subject, $search)
+    {
+        return $search === '' ? $subject : array_reverse(explode($search, $subject, 2))[0];
+    }
+
+    /**
+     * 返回最后一次出现给定值之后的字符串的其余部分
+     *
+     * @param  string  $subject
+     * @param  string  $search
+     * @return string
+     */
+    public static function afterLast($subject, $search)
+    {
+        if ($search === '') {
+            return $subject;
+        }
+
+        $position = strrpos($subject, (string) $search);
+
+        if ($position === false) {
+            return $subject;
+        }
+
+        return substr($subject, $position + strlen($search));
+    }
+
+    /**
+     * 在第一次出现给定值之前获取字符串的一部分
+     *
+     * @param  string  $subject
+     * @param  string  $search
+     * @return string
+     */
+    public static function before($subject, $search)
+    {
+        return $search === '' ? $subject : explode($search, $subject)[0];
+    }
+
+    /**
+     * 获取最后一次出现给定值之前的字符串部分
+     *
+     * @param  string  $subject
+     * @param  string  $search
+     * @return string
+     */
+    public static function beforeLast($subject, $search)
+    {
+        if ($search === '') {
+            return $subject;
+        }
+
+        $pos = mb_strrpos($subject, $search);
+
+        if ($pos === false) {
+            return $subject;
+        }
+
+        return static::substr($subject, 0, $pos);
+    }
+
+    /**
+     * 获取两个给定值之间的字符串部分
+     *
+     * @param  string  $subject
+     * @param  string  $from
+     * @param  string  $to
+     * @return string
+     */
+    public static function between($subject, $from, $to)
+    {
+        if ($from === '' || $to === '') {
+            return $subject;
+        }
+
+        return static::beforeLast(static::after($subject, $from), $to);
+    }
+
+    /**
      * 检查字符串中是否包含某些字符串
-     * @param string       $haystack
+     * @param string $haystack
      * @param string|array $needles
      * @return bool
      */
     public static function contains(string $haystack, $needles): bool
     {
-        foreach ((array) $needles as $needle) {
+        foreach ((array)$needles as $needle) {
             if ('' != $needle && mb_strpos($haystack, $needle) !== false) {
                 return true;
             }
@@ -30,16 +142,30 @@ class Str
     }
 
     /**
+     * 给字符串添加一个结尾
+     *
+     * @param  string  $value
+     * @param  string  $cap
+     * @return string
+     */
+    public static function finish($value, $cap)
+    {
+        $quoted = preg_quote($cap, '/');
+
+        return preg_replace('/(?:'.$quoted.')+$/u', '', $value).$cap;
+    }
+
+    /**
      * 检查字符串是否以某些字符串结尾
      *
-     * @param  string       $haystack
-     * @param  string|array $needles
+     * @param string $haystack
+     * @param string|array $needles
      * @return bool
      */
     public static function endsWith(string $haystack, $needles): bool
     {
-        foreach ((array) $needles as $needle) {
-            if ((string) $needle === static::substr($haystack, -static::length($needle))) {
+        foreach ((array)$needles as $needle) {
+            if ((string)$needle === static::substr($haystack, -static::length($needle))) {
                 return true;
             }
         }
@@ -50,13 +176,13 @@ class Str
     /**
      * 检查字符串是否以某些字符串开头
      *
-     * @param  string       $haystack
-     * @param  string|array $needles
+     * @param string $haystack
+     * @param string|array $needles
      * @return bool
      */
     public static function startsWith(string $haystack, $needles): bool
     {
-        foreach ((array) $needles as $needle) {
+        foreach ((array)$needles as $needle) {
             if ('' != $needle && mb_strpos($haystack, $needle) === 0) {
                 return true;
             }
@@ -68,9 +194,9 @@ class Str
     /**
      * 获取指定长度的随机字母数字组合的字符串
      *
-     * @param  int $length
-     * @param  int $type
-     * @param  string $addChars
+     * @param int $length
+     * @param int $type
+     * @param string $addChars
      * @return string
      */
     public static function random(int $length = 6, int $type = null, string $addChars = ''): string
@@ -113,7 +239,7 @@ class Str
     /**
      * 字符串转小写
      *
-     * @param  string $value
+     * @param string $value
      * @return string
      */
     public static function lower(string $value): string
@@ -124,7 +250,7 @@ class Str
     /**
      * 字符串转大写
      *
-     * @param  string $value
+     * @param string $value
      * @return string
      */
     public static function upper(string $value): string
@@ -135,7 +261,7 @@ class Str
     /**
      * 获取字符串的长度
      *
-     * @param  string $value
+     * @param string $value
      * @return int
      */
     public static function length(string $value): int
@@ -146,9 +272,9 @@ class Str
     /**
      * 截取字符串
      *
-     * @param  string   $string
-     * @param  int      $start
-     * @param  int|null $length
+     * @param string $string
+     * @param int $start
+     * @param int|null $length
      * @return string
      */
     public static function substr(string $string, int $start, int $length = null): string
@@ -159,8 +285,8 @@ class Str
     /**
      * 驼峰转下划线
      *
-     * @param  string $value
-     * @param  string $delimiter
+     * @param string $value
+     * @param string $delimiter
      * @return string
      */
     public static function snake(string $value, string $delimiter = '_'): string
@@ -183,7 +309,7 @@ class Str
     /**
      * 下划线转驼峰(首字母小写)
      *
-     * @param  string $value
+     * @param string $value
      * @return string
      */
     public static function camel(string $value): string
@@ -198,7 +324,7 @@ class Str
     /**
      * 下划线转驼峰(首字母大写)
      *
-     * @param  string $value
+     * @param string $value
      * @return string
      */
     public static function studly(string $value): string
@@ -217,11 +343,167 @@ class Str
     /**
      * 转为首字母大写的标题格式
      *
-     * @param  string $value
+     * @param string $value
      * @return string
      */
     public static function title(string $value): string
     {
         return mb_convert_case($value, MB_CASE_TITLE, 'UTF-8');
+    }
+
+    /**
+     * 返回子字符串出现的次数
+     *
+     * @param  string  $haystack
+     * @param  string  $needle
+     * @param  int  $offset
+     * @param  int|null  $length
+     * @return int
+     */
+    public static function substrCount($haystack, $needle, $offset = 0, $length = null)
+    {
+        if (! is_null($length)) {
+            return substr_count($haystack, $needle, $offset, $length);
+        } else {
+            return substr_count($haystack, $needle, $offset);
+        }
+    }
+
+    /**
+     * 限制字符串中的字符数
+     *
+     * @param  string  $value
+     * @param  int  $limit
+     * @param  string  $end
+     * @return string
+     */
+    public static function limit($value, $limit = 100, $end = '...')
+    {
+        if (mb_strwidth($value, 'UTF-8') <= $limit) {
+            return $value;
+        }
+
+        return rtrim(mb_strimwidth($value, 0, $limit, '', 'UTF-8')).$end;
+    }
+
+    /**
+     * 用数组顺序替换字符串中的给定值
+     *
+     * @param  string  $search
+     * @param  array<int|string, string>  $replace
+     * @param  string  $subject
+     * @return string
+     */
+    public static function replaceArray($search, array $replace, $subject)
+    {
+        $segments = explode($search, $subject);
+
+        $result = array_shift($segments);
+
+        foreach ($segments as $segment) {
+            $result .= (array_shift($replace) ?? $search).$segment;
+        }
+
+        return $result;
+    }
+
+    /**
+     * 替换字符串中第一次出现的给定值
+     *
+     * @param  string  $search
+     * @param  string  $replace
+     * @param  string  $subject
+     * @return string
+     */
+    public static function replaceFirst($search, $replace, $subject)
+    {
+        if ($search == '') {
+            return $subject;
+        }
+
+        $position = strpos($subject, $search);
+
+        if ($position !== false) {
+            return substr_replace($subject, $replace, $position, strlen($search));
+        }
+
+        return $subject;
+    }
+
+    /**
+     * 替换字符串中最后一次出现的给定值
+     *
+     * @param  string  $search
+     * @param  string  $replace
+     * @param  string  $subject
+     * @return string
+     */
+    public static function replaceLast($search, $replace, $subject)
+    {
+        $position = strrpos($subject, $search);
+
+        if ($position !== false) {
+            return substr_replace($subject, $replace, $position, strlen($search));
+        }
+
+        return $subject;
+    }
+
+    /**
+     * 生成一个UUID（版本4）
+     *
+     * @return \Ramsey\Uuid\UuidInterface
+     */
+    public static function uuid()
+    {
+        return static::$uuidFactory
+            ? call_user_func(static::$uuidFactory)
+            : Uuid::uuid4();
+    }
+
+    /**
+     * 生成按时间顺序排列的UUID（版本4）
+     *
+     * @return \Ramsey\Uuid\UuidInterface
+     */
+    public static function orderedUuid()
+    {
+        if (static::$uuidFactory) {
+            return call_user_func(static::$uuidFactory);
+        }
+
+        $factory = new UuidFactory();
+
+        $factory->setRandomGenerator(new CombGenerator(
+            $factory->getRandomGenerator(),
+            $factory->getNumberConverter()
+        ));
+
+        $factory->setCodec(new TimestampFirstCombCodec(
+            $factory->getUuidBuilder()
+        ));
+
+        return $factory->uuid4();
+    }
+
+    /**
+     * 设置将用于生成UUID的可调用对象
+     *
+     * @param callable|null $factory
+     * @return void
+     */
+    public static function createUuidsUsing(callable $factory = null)
+    {
+        static::$uuidFactory = $factory;
+    }
+
+    /**
+     * 指示应正常创建UUID，而不使用自定义工厂
+     *
+     * @return void
+     */
+    public static function createUuidsNormally()
+    {
+        static::$uuidFactory = null;
     }
 }

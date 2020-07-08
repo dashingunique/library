@@ -1,11 +1,11 @@
 {
-    "name": "dashingunique/library",
+    "name": "dashingUnique/library",
     "description": "php extension library",
     "type": "src",
     "license": "MIT",
     "authors": [
         {
-            "name": "dashingunique",
+            "name": "dashingUnique",
             "email": "1107842285@qq.com"
         }
     ],
@@ -13,14 +13,16 @@
         "php": ">=7.1",
         "ext-json": "*",
         "ext-mbstring": "*",
-        "ext-ctype": "*"
+        "ext-ctype": "*",
+        "ramsey/uuid": "^4.0",
+        "nesbot/carbon": "^2.36"
     },
     "autoload": {
         "files": [
             "src/Helper.php"
         ],
         "psr-4": {
-            "dashingunique\\library\\": "src/"
+            "dashingUnique\\library\\": "src/"
         }
     },
     "extra": {

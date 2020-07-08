@@ -1,6 +1,6 @@
 <?php
 
-namespace dashingunique\library\contract;
+namespace dashingUnique\library\contract;
 
 interface Jsonable
 {

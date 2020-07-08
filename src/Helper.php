@@ -1,7 +1,7 @@
 <?php
 
-use dashingunique\library\Collection;
-use dashingunique\library\Arr;
+use dashingUnique\library\Collection;
+use dashingUnique\library\Arr;
 
 if (!function_exists('uniqueCollection')) {
     /**
