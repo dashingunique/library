@@ -20,7 +20,7 @@
     },
     "autoload": {
         "files": [
-            "src/Helper.php"
+            "src/helper.php"
         ],
         "psr-4": {
             "dashingUnique\\library\\": "src/"
