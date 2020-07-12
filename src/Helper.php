@@ -14,6 +14,22 @@ if (!function_exists('uniqueCollection')) {
     }
 }
 
+if (!function_exists('')) {
+    /**
+     * 获取类名(不包含命名空间)
+     *
+     * @param mixed $class 类名
+     * @return string
+     */
+    function class_basename($class): string
+    {
+        $class = is_object($class) ? get_class($class) : $class;
+        return basename(str_replace('\\', '/', $class));
+    }
+}
+
+
+
 if (! function_exists('blank')) {
     /**
      * 确定给定值是否为空
