@@ -14,7 +14,7 @@ if (!function_exists('uniqueCollection')) {
     }
 }
 
-if (!function_exists('')) {
+if (!function_exists('class_basename')) {
     /**
      * 获取类名(不包含命名空间)
      *
