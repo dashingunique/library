@@ -630,4 +630,21 @@ class Arr
 
         return is_array($value) ? $value : [$value];
     }
+
+    /**
+     * 数组分组
+     * @param array $array
+     * @param $key
+     * @return array
+     */
+    public function arrayGroup(array $array, $key)   :array
+    {
+        $results = [];
+        foreach ($array as $val) {
+            if (isset($val[$key])) {
+                $results[$val[$key]][] = $val;
+            }
+        }
+        return $results;
+    }
 }
