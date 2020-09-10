@@ -4,7 +4,7 @@
  * ==========================================================================
  * @link      http://erp.chaolizi.cn/
  * @license   http://erp.chaolizi.cn/license.html License
- * @Desc      实例类
+ * @Desc
  * ==========================================================================
  * @author    张大宝的程序人生 <1107842285@qq.com>
  */
@@ -13,29 +13,27 @@ declare(strict_types=1);
 namespace dashingUnique\library\traits;
 
 
-trait Instance
+trait InstanceMulti
 {
     /**
-     * 单例模式申明
      * instances
      * @var array
      */
-    private static $instances;
+    private static $traitsInstances;
 
     /**
-     *获取相对应的单例
      * get instance
-     * @param mixed $param
-     * @return static
+     * @param  mixed $param
+     * @return self
      */
     public static function instance(...$param)
     {
-        $className = get_called_class();
+        $className = md5(get_called_class() . serialize(...$param));
 
-        if (empty(self::$instances[$className])) {
-            self::$instances[$className] = new static(...$param);
+        if (empty(self::$traitsInstances[$className])) {
+            self::$traitsInstances[$className] = new static(...$param);
         }
 
-        return self::$instances[$className];
+        return self::$traitsInstances[$className];
     }
 }
